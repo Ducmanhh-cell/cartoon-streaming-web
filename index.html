@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidFlix - Phim Hoạt Hình Trực Tuyến</title>
+    <style>
+        /* CSS Reset & Cơ bản */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            padding-top: 75px; /* Dành khoảng trống cho Fixed Header */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ----------------------------------
+           MỨC TRUNG BÌNH: Fixed Header & Links
+           ---------------------------------- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Logo bên trái Header */
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ff4757;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Khung tìm kiếm phim */
+        .search-box {
+            flex: 1;
+            max-width: 350px;
+            margin: 0 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        /* Head-link & Hiệu ứng hover (Loại bỏ gạch chân, bôi đậm & đổi màu) */
+        .head-link {
+            display: flex;
+            gap: 20px;
+        }
+
+        .head-link a {
+            color: #ecf0f1;
+            text-decoration: none; /* Bỏ gạch chân */
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .head-link a:hover {
+            font-weight: bold; /* Bôi đậm khi rê chuột */
+            color: #ff4757;    /* Đổi màu chữ */
+        }
+
+        /* ----------------------------------
+           MỨC CƠ BẢN: Bố cục Layout
+           ---------------------------------- */
+        .page-container {
+            display: flex;
+            flex: 1;
+            max-width: 1300px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 0 20px;
+            gap: 20px;
+        }
+
+        /* Left Content: Menu danh sách video */
+        .left-content {
+            width: 320px;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+
+        .left-content h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ff4757;
+            padding-bottom: 6px;
+        }
+
+        .video-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .video-item {
+            display: flex;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .video-item:hover {
+            background-color: #f1f2f6;
+        }
+
+        .video-item img {
+            width: 90px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .video-info h4 {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .video-info p {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        /* Right Content: Khu vực xem video */
+        .right-content {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Định dạng khung phát video tỉ lệ 16:9 chuẩn responsive */
+        .video-player-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Tỉ lệ 16:9 */
+            height: 0;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .video-player-wrapper iframe,
+        .video-player-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-details h2 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .video-details .meta {
+            font-size: 13px;
+            color: #27ae60;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .video-details p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* Footer */
+        .main-footer {
+            background-color: #2c3e50;
+            color: #bdc3c7;
+            text-align: center;
+            padding: 15px 20px;
+            font-size: 14px;
+            margin-top: auto;
+        }
+
+        /* ----------------------------------
+           MỨC NÂNG CAO: Responsive Design
+           ---------------------------------- */
+        /* Màn hình Tablet (Max 992px) */
+        @media (max-width: 992px) {
+            .page-container {
+                flex-direction: column-reverse; /* Đưa khung xem video lên trên, danh sách xuống dưới */
+            }
+
+            .left-content {
+                width: 100%;
+            }
+        }
+
+        /* Màn hình Điện thoại (Max 600px) */
+        @media (max-width: 600px) {
+            .main-header {
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+                gap: 8px;
+            }
+
+            body {
+                padding-top: 130px; /* Điều chỉnh padding cho header cao hơn ở giao diện mobile */
+            }
+
+            .search-box {
+                width: 100%;
+                margin: 0;
+            }
+
+            .head-link {
+                gap: 12px;
+                font-size: 13px;
+            }
+
+            .page-container {
+                padding: 0 10px;
+                margin: 10px auto;
+            }
+
+            .right-content {
+                padding: 12px;
+            }
+
+            .video-details h2 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Cố Định -->
+    <header class="main-header">
+        <a href="#" class="logo">🎬 KidFlix</a>
+        
+        <div class="search-box">
+            <input type="text" placeholder="Tìm kiếm phim hoạt hình...">
+        </div>
+
+        <nav class="head-link">
+            <a href="#home">Trang chủ</a>
+            <a href="#new">Mới cập nhật</a>
+            <a href="#popular">Xem nhiều nhất</a>
+            <a href="#genre">Thể loại</a>
+        </nav>
+    </header>
+
+    <!-- Khung Nội Dung Chính -->
+    <div class="page-container">
+        
+        <!-- Left Content: Menu Danh Sách Video -->
+        <aside class="left-content">
+            <h3>Danh Sách Phim</h3>
+            <ul class="video-list">
+                <li class="video-item">
+                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=200&auto=format&fit=crop" alt="Doraemon">
+                    <div class="video-info">
+                        <h4>Doraemon: Tập Đặc Biệt</h4>
+                        <p>FullHD 1080p • Thuyết minh</p>
+                    </div>
+                </li>
+                <li class="video-item">
+                    <img src="https://images.unsplash.com/photo-1563089145-599997674d42?w=200&auto=format&fit=crop" alt="Tom & Jerry">
+                    <div class="video-info">
+                        <h4>Tom & Jerry: Trận Chiến Chuột Mèo</h4>
+                        <p>HD 720p • Lượt xem: 850K</p>
+                    </div>
+                </li>
+                <li class="video-item">
+                    <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=200&auto=format&fit=crop" alt="Shin Cậu Bé Bút Chì">
+                    <div class="video-info">
+                        <h4>Shin Cậu Bé Bút Chì</h4>
+                        <p>FullHD 1080p • Thuyết minh</p>
+                    </div>
+                </li>
+                <li class="video-item">
+                    <img src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=200&auto=format&fit=crop" alt="Conan">
+                    <div class="video-info">
+                        <h4>Thám Tử Lừng Danh Conan</h4>
+                        <p>FullHD 1080p • Lượt xem: 1.2M</p>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Right Content: Khu Vực Xem Video -->
+        <main class="right-content">
+            <div class="video-player-wrapper">
+                <!-- Nhúng Video từ YouTube bằng thẻ <iframe> -->
+                <iframe 
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                    title="Phát video hoạt hình trực tuyến"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="video-details">
+                <h2>Doraemon: Tập Đặc Biệt - Hành Trình Kỳ Diệu</h2>
+                <div class="meta">✓ Chất lượng: FullHD 1080p | Thuyết minh tiếng Việt | Không quảng cáo</div>
+                <p>
+                    Bộ phim hoạt hình với nội dung chọn lọc giúp trẻ em học hỏi nhiều bài học bổ ích. Cùng Nobita và Doraemon trải nghiệm chuyến phiêu lưu kỳ thú với các bảo bối thần kỳ trong thế giới tương lai.
+                </p>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>© 2026 KidFlix - Trang web xem phim hoạt hình trực tuyến an toàn dành cho trẻ em.</p>
+    </footer>
+
+</body>
+</html>
